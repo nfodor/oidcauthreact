@@ -1,72 +1,72 @@
+# RBAC OpenAPI Project
 
-# RBAC with OpenAPI Documentation
-
-This project demonstrates a Role-Based Access Control (RBAC) system with OpenAPI documentation, where users have specific roles (Admin, Editor, Viewer) that determine their access rights to the API endpoints.
+A secure authentication system with Role-Based Access Control (RBAC) using JWT tokens.
 
 ## Features
 
-- **RBAC**: Users can have roles such as Admin, Editor, or Viewer, and their permissions are enforced using middleware.
-- **OpenAPI Documentation**: The project includes automatically generated OpenAPI documentation using `swagger-jsdoc` and `swagger-ui-express`, available at `/api-docs`.
-- **Content CRUD Operations**: Admin and Editor roles can create and edit content, while Viewers can only view content.
+- JWT token-based authentication with refresh tokens
+- Role-based access control (RBAC)
+- Secure cookie handling
+- MongoDB integration
+- User registration and login endpoints
+- Token refresh mechanism
+- Rate limiting for auth routes
+- Admin user creation on first run
 
-## Getting Started
+## Setup
 
-### Prerequisites
+1. Clone the repository
+2. Set up environment variables:
+   - In the `server` directory:
+     ```bash
+     cp .env.example .env
+     ```
+     Edit `.env` and update:
+     - `JWT_SECRET`: A secure random string for JWT signing
+     - `MONGO_URI`: Your MongoDB connection string
+     - `ADMIN_PASSWORD`: Password for the default admin user
+   
+   - In the `client/src` directory:
+     ```bash
+     cp .env.example .env
+     ```
+     Edit `.env` and update:
+     - `REACT_APP_API_URL`: URL of your backend server
 
-You need to have **Node.js** and **npm** installed. You can install them from [here](https://nodejs.org/).
-
-### Installation
-
-1. Clone the repository:
+3. Install dependencies:
    ```bash
-   git clone https://github.com/your-repository/rbac-openapi-project.git
-   cd rbac-openapi-project
-   ```
+   # Install server dependencies
+   cd server
+   npm install
 
-2. Install the dependencies:
-   ```bash
+   # Install client dependencies
+   cd ../client
    npm install
    ```
 
-3. Set up a `.env` file in the root of the project with the following:
+4. Start the development servers:
    ```bash
-   JWT_SECRET=your_secret_key
-   EMAIL_USER=your_email_address
-   EMAIL_PASSWORD=your_email_password
+   # Start the backend server
+   cd server
+   npm start
+
+   # In a new terminal, start the frontend
+   cd client
+   npm start
    ```
 
-4. Start the server:
-   ```bash
-   npm run dev
-   ```
+## Security Notes
 
-5. Access the OpenAPI documentation at `http://localhost:5000/api-docs`.
+- Never commit `.env` files to version control
+- Always use secure, randomly generated values for `JWT_SECRET`
+- Change the default admin password immediately after first login
+- Use HTTPS in production
+- Keep all dependencies up to date
 
-### Running the Project
+## API Documentation
 
-- Run the backend with:
-  ```bash
-  npm start
-  ```
-- To generate the OpenAPI documentation, run:
-  ```bash
-  npm run docs
-  ```
-
-## API Endpoints
-
-### Content Endpoints
-
-- `POST /content`: Create content (Admin, Editor).
-- `PUT /content/{id}`: Edit content (Admin, Editor).
-- `GET /content/{id}`: View content (Admin, Editor, Viewer).
-- `DELETE /content/{id}`: Delete content (Admin).
-
-### User Management (Admin Only)
-
-- `GET /admin/users`: View all users (Admin).
+The API documentation is available at `/api-docs` when running the server.
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-    
+MIT
