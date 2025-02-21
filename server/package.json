@@ -1,0 +1,33 @@
+{
+  "name": "rbac-openapi-server",
+  "version": "1.0.0",
+  "description": "RBAC server with OpenAPI documentation",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js",
+    "swagger-gen": "swagger-jsdoc -d swaggerDef.js -o swagger.json",
+    "docs": "npm run swagger-gen && swagger-ui-express docs"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "express": "^4.17.3",
+    "express-rate-limit": "^7.5.0",
+    "express-session": "^1.17.2",
+    "jsonwebtoken": "^8.5.1",
+    "jwt-simple": "^0.5.6",
+    "mongoose": "^6.2.5",
+    "nodemailer": "^6.7.2",
+    "passport": "^0.5.3",
+    "passport-github2": "^0.1.4",
+    "passport-google-oauth20": "^2.0.0",
+    "passport-openidconnect": "^0.1.2",
+    "swagger-jsdoc": "^6.0.0",
+    "swagger-ui-express": "^4.1.6"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.7"
+  }
+}
