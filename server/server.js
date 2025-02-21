@@ -11,6 +11,7 @@ const rateLimit = require('express-rate-limit');
 const cookieParser = require('cookie-parser');
 const openApiSpec = require('./openapi.json');
 require('dotenv').config();
+const crypto = require('crypto');
 
 mongoose.set('strictQuery', true); // Fix deprecation warning
 
@@ -41,7 +42,11 @@ app.use(cors({
 app.use('/auth', authLimiter);
 app.use('/auth/refresh-token', refreshLimiter);
 
-app.use(session({ secret: 'supersecret', resave: false, saveUninitialized: true }));
+app.use(session({ 
+  secret: process.env.SESSION_SECRET || crypto.randomBytes(32).toString('hex'),
+  resave: false, 
+  saveUninitialized: true 
+}));
 app.use(passport.initialize());
 app.use(passport.session());
 
