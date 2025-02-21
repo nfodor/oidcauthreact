@@ -1,67 +1,117 @@
 # RBAC OpenAPI Project
 
-A secure authentication system with Role-Based Access Control (RBAC) using JWT tokens.
+A Role-Based Access Control (RBAC) project with OpenAPI specification, featuring both server and client implementations.
 
 ## Features
 
-- JWT token-based authentication with refresh tokens
-- Role-based access control (RBAC)
-- Secure cookie handling
-- MongoDB integration
-- User registration and login endpoints
-- Token refresh mechanism
-- Rate limiting for auth routes
-- Admin user creation on first run
+- User authentication with JWT
+- Role-based access control (Admin, Editor, User roles)
+- Content management with role-based permissions
+- API documentation with OpenAPI/Swagger
+- Comprehensive test suite
 
-## Setup
+## Getting Started
 
-1. Clone the repository
-2. Set up environment variables:
-   - In the `server` directory:
-     ```bash
-     cp .env.example .env
-     ```
-     Edit `.env` and update:
-     - `JWT_SECRET`: A secure random string for JWT signing
-     - `MONGO_URI`: Your MongoDB connection string
-     - `ADMIN_PASSWORD`: Password for the default admin user
-   
-   - In the `client/src` directory:
-     ```bash
-     cp .env.example .env
-     ```
-     Edit `.env` and update:
-     - `REACT_APP_API_URL`: URL of your backend server
+### Prerequisites
 
-3. Install dependencies:
-   ```bash
-   # Install server dependencies
-   cd server
-   npm install
+- Node.js (v14 or higher)
+- MongoDB
+- npm or yarn
 
-   # Install client dependencies
-   cd ../client
-   npm install
-   ```
+### Installation
 
-4. Start the development servers:
-   ```bash
-   # Start the backend server
-   cd server
-   npm start
+1. Clone the repository:
+```bash
+git clone <repository-url>
+cd RBAC-OpenAPI-Project
+```
 
-   # In a new terminal, start the frontend
-   cd client
-   npm start
-   ```
+2. Install dependencies for both server and client:
+```bash
+# Install server dependencies
+cd server
+npm install
 
-## Security Notes
+# Install client dependencies
+cd ../client
+npm install
+```
 
-- Never commit `.env` files to version control
-- Always use secure, randomly generated values for `JWT_SECRET`
-- Change the default admin password immediately after first login
-- Use HTTPS in production
-- Keep all dependencies up to date
+3. Set up environment variables:
+```bash
+# Server environment variables
+cd server
+cp .env.example .env
+# Edit .env with your configuration
+
+# Client environment variables
+cd ../client
+cp .env.example .env
+# Edit .env with your configuration
+```
+
+### Running the Application
+
+1. Start the server:
+```bash
+cd server
+npm run dev
+```
+
+2. Start the client:
+```bash
+cd client
+npm start
+```
+
+### Running Tests
+
+```bash
+cd server
+npm test
+```
+
+## Development
+
+### Making Changes
+
+1. Create a new branch:
+```bash
+git checkout -b feature/your-feature-name
+```
+
+2. Make your changes and run tests:
+```bash
+cd server
+npm test
+```
+
+3. Commit your changes with a descriptive message:
+```bash
+git add .
+git commit -m "feat: description of your changes"
+```
+
+4. Push to your branch:
+```bash
+git push origin feature/your-feature-name
+```
+
+### Commit Message Guidelines
+
+Follow the conventional commits specification:
+
+- `feat:` - A new feature
+- `fix:` - A bug fix
+- `docs:` - Documentation changes
+- `test:` - Adding or modifying tests
+- `refactor:` - Code changes that neither fix a bug nor add a feature
+
+Example:
+```bash
+git commit -m "feat: add user role update endpoint"
+git commit -m "test: add test suite for content management"
+```
 
 ## API Documentation
 
@@ -69,4 +119,4 @@ The API documentation is available at `/api-docs` when running the server.
 
 ## License
 
-MIT
+This project is licensed under the MIT License - see the LICENSE file for details.

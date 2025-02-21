@@ -10,6 +10,9 @@ const swaggerUi = require('swagger-ui-express');
 const rateLimit = require('express-rate-limit');
 const cookieParser = require('cookie-parser');
 const openApiSpec = require('./openapi.json');
+const { User } = require('./models/user');
+const { Content } = require('./models/content');
+const { RefreshToken } = require('./models/refreshToken');
 require('dotenv').config();
 const crypto = require('crypto');
 
@@ -49,35 +52,6 @@ app.use(session({
 }));
 app.use(passport.initialize());
 app.use(passport.session());
-
-// MongoDB User Model
-const UserSchema = new mongoose.Schema({
-  email: { type: String, unique: true, required: true },
-  password: { type: String, required: true },
-  name: { type: String, required: true },
-  provider: String,
-  role: { type: String, enum: ['user', 'admin', 'editor', 'viewer'], default: 'user' },
-  emailVerified: { type: Boolean, default: false },
-  emailVerificationToken: String,
-});
-const User = mongoose.model('User', UserSchema);
-
-// MongoDB Refresh Token Model
-const RefreshTokenSchema = new mongoose.Schema({
-  token: { type: String, required: true },
-  user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-  expiresAt: { type: Date, required: true }
-});
-
-const RefreshToken = mongoose.model('RefreshToken', RefreshTokenSchema);
-
-// MongoDB Content Model
-const ContentSchema = new mongoose.Schema({
-  title: { type: String, required: true },
-  body: { type: String, required: true },
-  createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }
-});
-const Content = mongoose.model('Content', ContentSchema);
 
 // Helper function to generate tokens
 const generateTokens = async (user) => {
@@ -620,7 +594,9 @@ app.delete('/content/:id', authenticateJWT, authorizeRole(['admin']), async (req
 app.put('/admin/users/:id/role', authenticateJWT, authorizeRole(['admin']), async (req, res) => {
   try {
     const { role } = req.body;
-    if (!['user', 'admin', 'editor', 'viewer'].includes(role)) {
+    const validRoles = ['user', 'admin', 'editor', 'viewer'];
+    
+    if (!validRoles.includes(role)) {
       return res.status(400).json({ message: 'Invalid role' });
     }
 
@@ -636,7 +612,7 @@ app.put('/admin/users/:id/role', authenticateJWT, authorizeRole(['admin']), asyn
 
     res.json(user);
   } catch (error) {
-    console.error('Error updating user role:', error);
+    console.error('Error in PUT /admin/users/:id/role:', error);
     res.status(500).json({ message: 'Error updating user role', error: error.message });
   }
 });
@@ -678,44 +654,28 @@ app.use((err, req, res, next) => {
 });
 
 // Connect to MongoDB
-mongoose.connect(process.env.MONGO_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-  ssl: true,
-  directConnection: true
-})
-.then(() => {
-  console.log('Connected to MongoDB successfully');
-  console.log('Database URI:', process.env.MONGO_URI);
-  
-  // Create an admin user if none exists
-  return User.findOne({ role: 'admin' }).then(admin => {
-    if (!admin) {
-      console.log('Creating default admin user...');
-      const adminPassword = process.env.ADMIN_PASSWORD || 'admin123';
-      const salt = bcrypt.genSaltSync(10);
-      const hashedPassword = bcrypt.hashSync(adminPassword, salt);
-      
-      return User.create({
-        email: 'admin@example.com',
-        password: hashedPassword,
-        name: 'Admin User',
-        role: 'admin'
-      }).then(() => {
-        console.log('Default admin user created successfully');
-      });
-    }
-  });
-})
-.catch(err => {
-  console.error('MongoDB connection error:', err);
-  process.exit(1);
-});
+if (process.env.NODE_ENV !== 'test') {
+  mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/rbac-api')
+    .then(() => {
+      console.log('Connected to MongoDB successfully');
+      if (process.env.MONGODB_URI) {
+        console.log('Database URI:', process.env.MONGODB_URI);
+      }
+    })
+    .catch(err => {
+      console.error('MongoDB connection error:', err);
+      process.exit(1);
+    });
+}
 
 // Start server
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-  console.log('Environment:', process.env.NODE_ENV || 'development');
-  console.log('Client URL:', process.env.CLIENT_URL || 'http://localhost:3000');
-});
+if (require.main === module) {
+  const PORT = process.env.PORT || 5000;
+  app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+    console.log('Environment:', process.env.NODE_ENV || 'development');
+    console.log('Client URL:', process.env.CLIENT_URL || 'http://localhost:3000');
+  });
+}
+
+module.exports = app;
